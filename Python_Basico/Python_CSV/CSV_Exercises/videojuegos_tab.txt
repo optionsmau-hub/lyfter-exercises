@@ -1,0 +1,5 @@
+nombre	genero	desarrollador	clasificacion
+Call Of Duty WW3	Shooter	Activision	S
+Elder Ring	RPG	FRom Software	R
+Persona 5 Royal Edition	JRPG	SEGA	R
+FIFA 26	Sports	EA	E
