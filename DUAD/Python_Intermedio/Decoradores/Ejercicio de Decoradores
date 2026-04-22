@@ -1,0 +1,97 @@
+from functools import wraps
+from datetime import date
+
+
+# =========================
+# EXERCISE 1
+# =========================
+def log_function(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"Function: {func.__name__}")
+        print(f"Args: {args}")
+        print(f"Kwargs: {kwargs}")
+
+        result = func(*args, **kwargs)
+
+        print(f"Return: {result}")
+        return result
+
+    return wrapper
+
+
+# =========================
+# EXERCISE 2
+# =========================
+def validate_numbers(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        for arg in args:
+            if not isinstance(arg, (int, float)):
+                raise TypeError("All arguments must be numbers")
+
+        for value in kwargs.values():
+            if not isinstance(value, (int, float)):
+                raise TypeError("All arguments must be numbers")
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+# =========================
+# EXERCISE 3
+# =========================
+class User:
+    def __init__(self, date_of_birth):
+        self.date_of_birth = date_of_birth
+
+    @property
+    def age(self):
+        today = date.today()
+        age = today.year - self.date_of_birth.year
+
+        if (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day):
+            age -= 1
+
+        return age
+
+
+def adult_required(func):
+    @wraps(func)
+    def wrapper(user, *args, **kwargs):
+        if not isinstance(user, User):
+            raise TypeError("First argument must be a User")
+
+        if user.age < 18:
+            raise ValueError("User must be an adult")
+
+        return func(user, *args, **kwargs)
+
+    return wrapper
+
+
+# =========================
+# TESTS / EXAMPLES
+# =========================
+@log_function
+def sum_numbers(a, b):
+    return a + b
+
+
+@validate_numbers
+def multiply(a, b):
+    return a * b
+
+
+@adult_required
+def enter_club(user):
+    return "Welcome to the club"
+
+
+if __name__ == "__main__":
+    print(sum_numbers(5, 3))
+    print(multiply(2, 4))
+
+    adult = User(date(2000, 5, 10))
+    print(enter_club(adult))
