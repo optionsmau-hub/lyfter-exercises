@@ -1,0 +1,26 @@
+[
+    {
+        "title": "Salary",
+        "amount": 1000,
+        "category_name": "Work",
+        "transaction_type": "income"
+    },
+    {
+        "title": "Groceries",
+        "amount": 50,
+        "category_name": "Food",
+        "transaction_type": "expense"
+    },
+    {
+        "title": "Trip",
+        "amount": 235.0,
+        "category_name": "Transport-Uber",
+        "transaction_type": "income"
+    },
+    {
+        "title": "Montly Child Support",
+        "amount": 650.0,
+        "category_name": "Child Support",
+        "transaction_type": "expense"
+    }
+]
