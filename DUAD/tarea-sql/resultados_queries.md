@@ -1,12 +1,12 @@
-# Resultados de Queries — library.db
+# Query Results — library.db
 
-Base de datos creada e interrogada con el CLI `sqlite3` (versión 3.53.4), a partir del script [setup_library.sql](setup_library.sql) que genera [library.db](library.db).
+Database created and queried with the `sqlite3` CLI (version 3.53.4), from the [setup_library.sql](setup_library.sql) script that generates [library.db](library.db).
 
 ---
 
-## 1. Todos los libros y sus autores (si los tienen)
+## 1. All books and their authors (if they have one)
 
-**Por qué `LEFT JOIN`:** la tabla base es `Books`, y queremos conservar **todos** los libros aunque no tengan autor asociado (el libro con `Author = NULL`). Un `INNER JOIN` habría excluido "The Book of the 5 Rings" porque no tiene coincidencia en `Authors`.
+**Why `LEFT JOIN`:** the base table is `Books`, and we want to keep **every** book even if it has no associated author (the one with `Author = NULL`). An `INNER JOIN` would have excluded "The Book of the 5 Rings" since it has no match in `Authors`.
 
 ```sql
 SELECT Books.Name AS Book, Authors.Name AS Author
@@ -26,9 +26,9 @@ The Book of the 5 Rings
 
 ---
 
-## 2. Libros sin autor
+## 2. Books without an author
 
-**Por qué `LEFT JOIN`:** partimos de `Books` (queremos ver libros) y unimos con `Authors`. Al no encontrar coincidencia, las columnas de `Authors` quedan en `NULL`; filtrando por `Authors.ID IS NULL` aislamos justamente los libros huérfanos de autor.
+**Why `LEFT JOIN`:** we start from `Books` (we want to see books) and join with `Authors`. When no match is found, the `Authors` columns come back as `NULL`; filtering on `Authors.ID IS NULL` isolates exactly the books with no author.
 
 ```sql
 SELECT Books.ID, Books.Name
@@ -45,9 +45,9 @@ ID           Name
 
 ---
 
-## 3. Autores sin libros
+## 3. Authors without books
 
-**Por qué `LEFT JOIN`:** aquí la tabla base cambia a `Authors`, porque queremos conservar todos los autores aunque no tengan ningún libro relacionado. Filtramos por `Books.ID IS NULL` para quedarnos solo con los que no encontraron coincidencia.
+**Why `LEFT JOIN`:** here the base table switches to `Authors`, since we want to keep every author even without any related book. We filter on `Books.ID IS NULL` to keep only the ones with no match.
 
 ```sql
 SELECT Authors.ID, Authors.Name
@@ -64,9 +64,9 @@ ID     Name
 
 ---
 
-## 4. Libros que han sido rentados alguna vez
+## 4. Books that have been rented at least once
 
-**Por qué `INNER JOIN`:** solo interesan los libros que **sí** tienen al menos una coincidencia en `Rents`. `INNER JOIN` descarta automáticamente los libros sin ninguna renta asociada, que es exactamente lo que buscamos. Se usa `DISTINCT` porque un libro puede tener varias rentas (por ejemplo, "La Divina Comedia" aparece dos veces en `Rents`) y no queremos duplicados.
+**Why `INNER JOIN`:** only books that **do** have at least one match in `Rents` matter. `INNER JOIN` automatically discards books with no associated rental, which is exactly what we're after. `DISTINCT` is used because a book can have several rentals (e.g. "La Divina Comedia" appears twice in `Rents`), and we don't want duplicates.
 
 ```sql
 SELECT DISTINCT Books.ID, Books.Name
@@ -84,9 +84,9 @@ ID        Name
 
 ---
 
-## 5. Libros que nunca han sido rentados
+## 5. Books that have never been rented
 
-**Por qué `LEFT JOIN`:** de nuevo partimos de `Books` para conservar todos los libros, y filtramos por `Rents.ID IS NULL` para quedarnos solo con los que no encontraron ninguna coincidencia en `Rents`.
+**Why `LEFT JOIN`:** again we start from `Books` to keep every book, and filter on `Rents.ID IS NULL` to keep only the ones with no match in `Rents`.
 
 ```sql
 SELECT Books.ID, Books.Name
@@ -104,9 +104,9 @@ ID           Name
 
 ---
 
-## 6. Clientes que nunca han rentado un libro
+## 6. Customers who have never rented a book
 
-**Por qué `LEFT JOIN`:** partimos de `Customers` para conservar todos los clientes, y filtramos por `Rents.ID IS NULL` para quedarnos solo con quienes no tienen ninguna renta registrada.
+**Why `LEFT JOIN`:** we start from `Customers` to keep every customer, and filter on `Rents.ID IS NULL` to keep only those with no rental on record.
 
 ```sql
 SELECT Customers.ID, Customers.Name
@@ -123,9 +123,9 @@ ID       Name
 
 ---
 
-## 7. Libros rentados en estado "Overdue"
+## 7. Books rented with state "Overdue"
 
-**Por qué `INNER JOIN`:** solo interesan rentas que existen y que además tienen coincidencia tanto en `Books` como en `Customers`; no hay necesidad de conservar filas sin match, así que `INNER JOIN` es suficiente y más directo. Se agrega el join con `Customers` para mostrar quién tiene el libro atrasado.
+**Why `INNER JOIN`:** only rentals that exist and additionally have a match in both `Books` and `Customers` are of interest; there's no need to keep unmatched rows, so `INNER JOIN` is enough and more direct. The join with `Customers` is added to show who has the overdue book.
 
 ```sql
 SELECT Books.Name AS Book, Customers.Name AS Customer, Rents.State

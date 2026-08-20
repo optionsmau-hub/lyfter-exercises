@@ -1,6 +1,6 @@
-# Operaciones de Conjuntos
+# Set Operations
 
-Conjuntos de partida:
+Starting sets:
 
 ```
 All  = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
@@ -10,131 +10,131 @@ Odd  = {1, 3, 5, 7, 9}
 
 ---
 
-## 1. Even ∪ Odd (Unión)
+## 1. Even ∪ Odd (Union)
 
-La unión reúne **todos los elementos que están en Even, en Odd, o en ambos**, sin repetir elementos.
+The union gathers **every element that is in Even, in Odd, or in both**, without repeating elements.
 
-**Paso a paso:**
-1. Tomamos todos los elementos de Even: `{2, 4, 6, 8, 10}`
-2. Agregamos todos los elementos de Odd que aún no estén en el resultado: `{1, 3, 5, 7, 9}`
-3. Como Even y Odd no comparten ningún elemento, simplemente se combinan.
+**Step by step:**
+1. Take all elements of Even: `{2, 4, 6, 8, 10}`
+2. Add every element of Odd that isn't already in the result: `{1, 3, 5, 7, 9}`
+3. Since Even and Odd share no elements, they simply combine.
 
-**Resultado:**
+**Result:**
 ```
 Even ∪ Odd = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 ```
 
-Nota: `Even ∪ Odd = All`, porque Even y Odd particionan completamente a All.
+Note: `Even ∪ Odd = All`, because Even and Odd fully partition All.
 
 ---
 
-## 2. Even ∩ Odd (Intersección)
+## 2. Even ∩ Odd (Intersection)
 
-La intersección son los elementos que están **al mismo tiempo** en Even y en Odd.
+The intersection is the set of elements that are **in both** Even and Odd at the same time.
 
-**Paso a paso:**
-1. Recorremos cada elemento de Even: `2, 4, 6, 8, 10`
-2. Verificamos si cada uno también pertenece a Odd:
-   - 2 → ¿está en Odd? No
-   - 4 → ¿está en Odd? No
-   - 6 → ¿está en Odd? No
-   - 8 → ¿está en Odd? No
-   - 10 → ¿está en Odd? No
-3. Ningún número puede ser par e impar a la vez, así que no hay coincidencias.
+**Step by step:**
+1. Go through each element of Even: `2, 4, 6, 8, 10`
+2. Check whether each one also belongs to Odd:
+   - 2 → is it in Odd? No
+   - 4 → is it in Odd? No
+   - 6 → is it in Odd? No
+   - 8 → is it in Odd? No
+   - 10 → is it in Odd? No
+3. No number can be both even and odd, so there are no matches.
 
-**Resultado:**
+**Result:**
 ```
-Even ∩ Odd = { } (conjunto vacío, ∅)
+Even ∩ Odd = { } (empty set, ∅)
 ```
 
 ---
 
-## 3. All − Odd (Diferencia)
+## 3. All − Odd (Difference)
 
-La diferencia `All − Odd` son los elementos que están en All pero **no** están en Odd.
+The difference `All − Odd` is the set of elements that are in All but **not** in Odd.
 
-**Paso a paso:**
-1. Recorremos cada elemento de All: `1, 2, 3, 4, 5, 6, 7, 8, 9, 10`
-2. Quitamos los que también estén en Odd (`1, 3, 5, 7, 9`):
-   - 1 → está en Odd → se elimina
-   - 2 → no está en Odd → se mantiene
-   - 3 → está en Odd → se elimina
-   - 4 → no está en Odd → se mantiene
-   - 5 → está en Odd → se elimina
-   - 6 → no está en Odd → se mantiene
-   - 7 → está en Odd → se elimina
-   - 8 → no está en Odd → se mantiene
-   - 9 → está en Odd → se elimina
-   - 10 → no está en Odd → se mantiene
+**Step by step:**
+1. Go through each element of All: `1, 2, 3, 4, 5, 6, 7, 8, 9, 10`
+2. Remove the ones that are also in Odd (`1, 3, 5, 7, 9`):
+   - 1 → is in Odd → removed
+   - 2 → not in Odd → kept
+   - 3 → is in Odd → removed
+   - 4 → not in Odd → kept
+   - 5 → is in Odd → removed
+   - 6 → not in Odd → kept
+   - 7 → is in Odd → removed
+   - 8 → not in Odd → kept
+   - 9 → is in Odd → removed
+   - 10 → not in Odd → kept
 
-**Resultado:**
+**Result:**
 ```
 All − Odd = {2, 4, 6, 8, 10}
 ```
 
-Nota: `All − Odd = Even`, ya que quitarle los impares a All deja únicamente los pares.
+Note: `All − Odd = Even`, since removing the odd numbers from All leaves only the even ones.
 
 ---
 
-## 4. C(Even) — Complemento de Even respecto a All
+## 4. C(Even) — Complement of Even with respect to All
 
-El complemento de Even respecto a All son los elementos de All que **no** pertenecen a Even. Es decir, `C(Even) = All − Even`.
+The complement of Even with respect to All is the set of elements of All that **do not** belong to Even. That is, `C(Even) = All − Even`.
 
-**Paso a paso:**
-1. Recorremos cada elemento de All: `1, 2, 3, 4, 5, 6, 7, 8, 9, 10`
-2. Quitamos los que estén en Even (`2, 4, 6, 8, 10`):
-   - 1 → no está en Even → se mantiene
-   - 2 → está en Even → se elimina
-   - 3 → no está en Even → se mantiene
-   - 4 → está en Even → se elimina
-   - 5 → no está en Even → se mantiene
-   - 6 → está en Even → se elimina
-   - 7 → no está en Even → se mantiene
-   - 8 → está en Even → se elimina
-   - 9 → no está en Even → se mantiene
-   - 10 → está en Even → se elimina
+**Step by step:**
+1. Go through each element of All: `1, 2, 3, 4, 5, 6, 7, 8, 9, 10`
+2. Remove the ones that are in Even (`2, 4, 6, 8, 10`):
+   - 1 → not in Even → kept
+   - 2 → is in Even → removed
+   - 3 → not in Even → kept
+   - 4 → is in Even → removed
+   - 5 → not in Even → kept
+   - 6 → is in Even → removed
+   - 7 → not in Even → kept
+   - 8 → is in Even → removed
+   - 9 → not in Even → kept
+   - 10 → is in Even → removed
 
-**Resultado:**
+**Result:**
 ```
 C(Even) = {1, 3, 5, 7, 9}
 ```
 
-Nota: `C(Even) = Odd`.
+Note: `C(Even) = Odd`.
 
 ---
 
-## 5. C(Odd − All) — Complemento de (Odd − All)
+## 5. C(Odd − All) — Complement of (Odd − All)
 
-Este ejercicio tiene dos partes: primero se calcula `Odd − All`, y luego se saca el complemento de ese resultado respecto a All.
+This exercise has two parts: first compute `Odd − All`, then take the complement of that result with respect to All.
 
-**Paso a paso — Parte A: `Odd − All`**
-1. Recorremos cada elemento de Odd: `1, 3, 5, 7, 9`
-2. Quitamos los que también estén en All. Como Odd es un subconjunto de All, **todos** los elementos de Odd están en All:
-   - 1 → está en All → se elimina
-   - 3 → está en All → se elimina
-   - 5 → está en All → se elimina
-   - 7 → está en All → se elimina
-   - 9 → está en All → se elimina
-3. No queda ningún elemento.
+**Step by step — Part A: `Odd − All`**
+1. Go through each element of Odd: `1, 3, 5, 7, 9`
+2. Remove the ones that are also in All. Since Odd is a subset of All, **every** element of Odd is in All:
+   - 1 → is in All → removed
+   - 3 → is in All → removed
+   - 5 → is in All → removed
+   - 7 → is in All → removed
+   - 9 → is in All → removed
+3. No elements remain.
 
 ```
-Odd − All = { } (conjunto vacío, ∅)
+Odd − All = { } (empty set, ∅)
 ```
 
-**Paso a paso — Parte B: `C(∅)`**
-1. El complemento del conjunto vacío respecto a All son los elementos de All que no están en `∅`.
-2. Como `∅` no tiene elementos, **ningún** elemento de All se elimina.
+**Step by step — Part B: `C(∅)`**
+1. The complement of the empty set with respect to All is the set of elements of All that are not in `∅`.
+2. Since `∅` has no elements, **none** of the elements of All get removed.
 
-**Resultado:**
+**Result:**
 ```
 C(Odd − All) = C(∅) = All = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 ```
 
 ---
 
-## Resumen de resultados
+## Summary of results
 
-| Operación | Resultado |
+| Operation | Result |
 |---|---|
 | Even ∪ Odd | {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} |
 | Even ∩ Odd | ∅ |
