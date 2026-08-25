@@ -1,3 +1,4 @@
+# Exercise 2: Abstract User class with AdminUser and RegularUser
 from abc import ABC, abstractmethod
 
 

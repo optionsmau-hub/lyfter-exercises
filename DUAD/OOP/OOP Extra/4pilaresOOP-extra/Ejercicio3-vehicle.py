@@ -1,3 +1,4 @@
+# Exercise 3: Vehicle base class with Car and Motorcycle subclasses
 class Vehicle:
     def __init__(self, brand, year):
         self._brand = brand
