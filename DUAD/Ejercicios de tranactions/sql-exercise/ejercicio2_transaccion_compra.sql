@@ -55,12 +55,13 @@ BEGIN
         v_product_id := v_cart[i][1];
         v_quantity   := v_cart[i][2];
 
-        SELECT Price INTO v_price FROM Products WHERE ID = v_product_id;
+        UPDATE Products
+        SET Stock = Stock - v_quantity
+        WHERE ID = v_product_id
+        RETURNING Price INTO v_price;
 
         INSERT INTO BillDetails (BillID, ProductID, Quantity, UnitPrice)
         VALUES (v_bill_id, v_product_id, v_quantity, v_price);
-
-        UPDATE Products SET Stock = Stock - v_quantity WHERE ID = v_product_id;
     END LOOP;
 
     RAISE NOTICE 'Purchase completed. Bill generated with ID: %', v_bill_id;

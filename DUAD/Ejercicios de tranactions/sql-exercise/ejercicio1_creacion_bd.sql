@@ -25,7 +25,7 @@ CREATE TABLE Bills (
     ID       SERIAL PRIMARY KEY,
     UserID   INTEGER NOT NULL,
     BillDate TIMESTAMP NOT NULL DEFAULT NOW(),
-    State    TEXT NOT NULL DEFAULT 'Completed',   -- 'Completed', 'Returned'
+    State    TEXT NOT NULL DEFAULT 'Completed' CHECK (State IN ('Completed', 'Returned')),
     FOREIGN KEY (UserID) REFERENCES Users(ID)
 );
 
