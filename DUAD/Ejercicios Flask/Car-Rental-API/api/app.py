@@ -11,7 +11,7 @@ import psycopg2.extras
 from flask import Flask, jsonify, request
 from werkzeug.security import generate_password_hash
 
-from db import fetch_all, fetch_one, get_connection
+from db import _serialize_row, fetch_all, fetch_one, get_connection
 
 app = Flask(__name__)
 
@@ -93,7 +93,7 @@ def create_rental(user_id, car_id):
                 """,
                 (user_id, car_id),
             )
-            rental = dict(cur.fetchone())
+            rental = _serialize_row(cur.fetchone())
             cur.execute("UPDATE cars SET status = 'rented' WHERE id = %s", (car_id,))
             return rental
 
@@ -117,7 +117,7 @@ def complete_rental(rental_id):
                 """,
                 (rental_id,),
             )
-            updated_rental = dict(cur.fetchone())
+            updated_rental = _serialize_row(cur.fetchone())
             cur.execute("UPDATE cars SET status = 'available' WHERE id = %s", (rental["car_id"],))
             return updated_rental
 
@@ -139,7 +139,7 @@ def update_rental_status(rental_id, new_status):
                 """,
                 (new_status, rental_id),
             )
-            updated_rental = dict(cur.fetchone())
+            updated_rental = _serialize_row(cur.fetchone())
 
             # Cancelling an active rental frees up the car again.
             if new_status == "cancelled" and rental["status"] == "active":

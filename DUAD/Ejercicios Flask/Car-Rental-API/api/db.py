@@ -8,6 +8,7 @@ on any error, so every route only has to worry about its own query.
 
 import os
 from contextlib import contextmanager
+from datetime import date, datetime
 
 import psycopg2
 import psycopg2.extras
@@ -39,11 +40,19 @@ def get_connection():
         conn.close()
 
 
+def _serialize_row(row):
+    """Converts date/datetime values to ISO 8601 strings for clean JSON output."""
+    return {
+        key: value.isoformat() if isinstance(value, (date, datetime)) else value
+        for key, value in row.items()
+    }
+
+
 def fetch_all(query, params=None):
     with get_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(query, params or [])
-            return [dict(row) for row in cur.fetchall()]
+            return [_serialize_row(row) for row in cur.fetchall()]
 
 
 def fetch_one(query, params=None):
@@ -51,4 +60,4 @@ def fetch_one(query, params=None):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(query, params or [])
             row = cur.fetchone()
-            return dict(row) if row else None
+            return _serialize_row(row) if row else None
