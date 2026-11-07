@@ -48,6 +48,61 @@ def _serialize_row(row):
     }
 
 
+def _is_valid_date(value):
+    try:
+        datetime.strptime(value, "%Y-%m-%d")
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _is_valid_datetime(value):
+    if _is_valid_date(value):
+        return True
+    try:
+        datetime.fromisoformat(value)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _coerce_filter_value(column, value, column_type):
+    """Validates/converts a raw query-string value against a column's type."""
+    if column_type == "int":
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            raise ValueError(f"'{column}' must be an integer.")
+    if column_type == "date":
+        if not _is_valid_date(value):
+            raise ValueError(f"'{column}' must be a date in YYYY-MM-DD format.")
+        return value
+    if column_type == "datetime":
+        if not _is_valid_datetime(value):
+            raise ValueError(f"'{column}' must be a date (YYYY-MM-DD) or an ISO 8601 timestamp.")
+        return value
+    return value
+
+
+def build_where(args, allowed_columns, column_types=None):
+    """
+    Builds a parameterized WHERE clause from query-string filters.
+    Raises ValueError if a filter name isn't an allowed column, or if its
+    value doesn't match the column's expected type (column_types maps a
+    column name to "int", "date", "datetime", defaulting to plain text).
+    """
+    column_types = column_types or {}
+    clauses = []
+    params = []
+    for key, value in args.items():
+        if key not in allowed_columns:
+            raise ValueError(f"'{key}' is not a filterable column.")
+        clauses.append(f"{key} = %s")
+        params.append(_coerce_filter_value(key, value, column_types.get(key, "text")))
+    where_sql = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+    return where_sql, params
+
+
 def fetch_all(query, params=None):
     with get_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
