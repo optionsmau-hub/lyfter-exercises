@@ -4,7 +4,7 @@ session per call. All data access goes through the ORM (session.get,
 session.scalars, etc.) -- no raw SQL anywhere in this file.
 """
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from database import SessionLocal
 from models import Automovil, Direccion, Usuario
@@ -47,6 +47,17 @@ class UsuarioManager:
     def consultar_todos(self):
         with SessionLocal() as session:
             return list(session.scalars(select(Usuario)).all())
+
+    def consultar_con_mas_de_un_auto(self):
+        """Usuarios con mas de 1 automovil asociado."""
+        with SessionLocal() as session:
+            stmt = (
+                select(Usuario)
+                .join(Automovil, Automovil.usuario_id == Usuario.id)
+                .group_by(Usuario.id)
+                .having(func.count(Automovil.id) > 1)
+            )
+            return list(session.scalars(stmt).all())
 
 
 class AutomovilManager:
@@ -91,6 +102,12 @@ class AutomovilManager:
         with SessionLocal() as session:
             return list(session.scalars(select(Automovil)).all())
 
+    def consultar_sin_usuario(self):
+        """Automoviles que no tienen usuario asociado."""
+        with SessionLocal() as session:
+            stmt = select(Automovil).where(Automovil.usuario_id.is_(None))
+            return list(session.scalars(stmt).all())
+
 
 class DireccionManager:
     def crear(self, usuario_id, calle, ciudad, provincia, codigo_postal):
@@ -126,3 +143,9 @@ class DireccionManager:
     def consultar_todas(self):
         with SessionLocal() as session:
             return list(session.scalars(select(Direccion)).all())
+
+    def buscar_por_calle(self, substring):
+        """Direcciones cuya calle contiene el substring dado (sin distinguir mayusculas)."""
+        with SessionLocal() as session:
+            stmt = select(Direccion).where(Direccion.calle.ilike(f"%{substring}%"))
+            return list(session.scalars(stmt).all())

@@ -25,10 +25,11 @@ class Usuario(Base):
     fecha_nacimiento: Mapped[date] = mapped_column(nullable=False)
     estado: Mapped[str] = mapped_column(String(20), nullable=False, default="activo")
 
+    # Bidirectional access: usuario.direcciones / usuario.autos
     direcciones: Mapped[List["Direccion"]] = relationship(
         back_populates="usuario", cascade="all, delete-orphan"
     )
-    automoviles: Mapped[List["Automovil"]] = relationship(back_populates="usuario")
+    autos: Mapped[List["Automovil"]] = relationship(back_populates="usuario")
 
     def __repr__(self):
         return f"<Usuario id={self.id} username={self.username!r}>"
@@ -60,7 +61,7 @@ class Automovil(Base):
     anio: Mapped[int] = mapped_column(nullable=False)
     placa: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
 
-    usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="automoviles")
+    usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="autos")
 
     def __repr__(self):
         return f"<Automovil id={self.id} placa={self.placa!r} usuario_id={self.usuario_id}>"

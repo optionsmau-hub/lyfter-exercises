@@ -38,3 +38,24 @@ Revisa qué tablas existen (vía `sqlalchemy.inspect`, sin SQL) y crea solo las 
 python demo.py
 ```
 Crea un usuario, un auto sin dueño, lo asocia al usuario, crea una dirección, prueba que una dirección con un usuario inexistente se rechaza, consulta todos los registros, y al final borra lo que creó (se puede correr varias veces sin dejar basura).
+
+## Extra: filtros avanzados (Tarea 1 extra)
+
+- `AutomovilManager.consultar_sin_usuario()` — autos sin usuario asociado.
+- `UsuarioManager.consultar_con_mas_de_un_auto()` — usuarios con más de 1 auto.
+- `DireccionManager.buscar_por_calle(substring)` — direcciones cuya calle contiene ese substring (sin distinguir mayúsculas/minúsculas).
+
+## Extra: relaciones bidireccionales (Tarea 2 extra)
+
+`usuario.autos` y `usuario.direcciones` dan acceso directo a los autos/direcciones de ese usuario. `reportes.py` los usa para imprimir todo lo de un usuario dado su id:
+
+```bash
+python reportes.py <usuario_id>
+```
+
+## Extra: seed con Faker (Tarea 3 extra)
+
+```bash
+python seed_with_faker.py
+```
+Vacía y repuebla la base con 25 usuarios (cada uno con 1-2 direcciones y 0-2 autos) más 8 autos sin usuario asignado — todo insertado a través de `UsuarioManager`, `DireccionManager` y `AutomovilManager` (ORM puro, sin SQL).
