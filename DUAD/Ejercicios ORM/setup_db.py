@@ -1,7 +1,6 @@
 """
-Checks whether usuarios, direcciones and automoviles exist, and creates
-whichever ones are missing. Uses SQLAlchemy's inspection API only --
-no raw SQL.
+Checks whether users, addresses and cars exist, and creates whichever
+ones are missing. Uses SQLAlchemy's inspection API only -- no raw SQL.
 
 Run from this folder:
     python setup_db.py
@@ -12,7 +11,7 @@ from sqlalchemy import inspect
 import models  # noqa: F401  (registers the models on Base.metadata)
 from database import Base, engine
 
-REQUIRED_TABLES = ["usuarios", "direcciones", "automoviles"]
+REQUIRED_TABLES = ["users", "addresses", "cars"]
 
 
 def main():

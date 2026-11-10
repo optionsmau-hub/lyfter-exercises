@@ -1,8 +1,8 @@
 """
-ORM models: Usuario, Direccion and Automovil.
+ORM models: User, Address and Car.
 
-- Direccion.usuario_id is NOT NULL: every address must belong to a user.
-- Automovil.usuario_id is nullable: a car can exist without an owner.
+- Address.user_id is NOT NULL: every address must belong to a user.
+- Car.user_id is nullable: a car can exist without an owner.
 """
 
 from datetime import date
@@ -14,54 +14,54 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
 
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
+class User(Base):
+    __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    nombre_completo: Mapped[str] = mapped_column(String(120), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     username: Mapped[str] = mapped_column(String(60), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(200), nullable=False)
-    fecha_nacimiento: Mapped[date] = mapped_column(nullable=False)
-    estado: Mapped[str] = mapped_column(String(20), nullable=False, default="activo")
+    birth_date: Mapped[date] = mapped_column(nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
 
-    # Bidirectional access: usuario.direcciones / usuario.autos
-    direcciones: Mapped[List["Direccion"]] = relationship(
-        back_populates="usuario", cascade="all, delete-orphan"
+    # Bidirectional access: user.addresses / user.cars
+    addresses: Mapped[List["Address"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
     )
-    autos: Mapped[List["Automovil"]] = relationship(back_populates="usuario")
+    cars: Mapped[List["Car"]] = relationship(back_populates="user")
 
     def __repr__(self):
-        return f"<Usuario id={self.id} username={self.username!r}>"
+        return f"<User id={self.id} username={self.username!r}>"
 
 
-class Direccion(Base):
-    __tablename__ = "direcciones"
+class Address(Base):
+    __tablename__ = "addresses"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
-    calle: Mapped[str] = mapped_column(String(150), nullable=False)
-    ciudad: Mapped[str] = mapped_column(String(80), nullable=False)
-    provincia: Mapped[str] = mapped_column(String(80), nullable=False)
-    codigo_postal: Mapped[str] = mapped_column(String(20), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    street: Mapped[str] = mapped_column(String(150), nullable=False)
+    city: Mapped[str] = mapped_column(String(80), nullable=False)
+    province: Mapped[str] = mapped_column(String(80), nullable=False)
+    postal_code: Mapped[str] = mapped_column(String(20), nullable=False)
 
-    usuario: Mapped["Usuario"] = relationship(back_populates="direcciones")
+    user: Mapped["User"] = relationship(back_populates="addresses")
 
     def __repr__(self):
-        return f"<Direccion id={self.id} usuario_id={self.usuario_id}>"
+        return f"<Address id={self.id} user_id={self.user_id}>"
 
 
-class Automovil(Base):
-    __tablename__ = "automoviles"
+class Car(Base):
+    __tablename__ = "cars"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    usuario_id: Mapped[Optional[int]] = mapped_column(ForeignKey("usuarios.id"), nullable=True)
-    marca: Mapped[str] = mapped_column(String(60), nullable=False)
-    modelo: Mapped[str] = mapped_column(String(60), nullable=False)
-    anio: Mapped[int] = mapped_column(nullable=False)
-    placa: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    brand: Mapped[str] = mapped_column(String(60), nullable=False)
+    model: Mapped[str] = mapped_column(String(60), nullable=False)
+    year: Mapped[int] = mapped_column(nullable=False)
+    license_plate: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
 
-    usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="autos")
+    user: Mapped[Optional["User"]] = relationship(back_populates="cars")
 
     def __repr__(self):
-        return f"<Automovil id={self.id} placa={self.placa!r} usuario_id={self.usuario_id}>"
+        return f"<Car id={self.id} license_plate={self.license_plate!r} user_id={self.user_id}>"

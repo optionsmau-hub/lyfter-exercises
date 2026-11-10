@@ -7,145 +7,143 @@ session.scalars, etc.) -- no raw SQL anywhere in this file.
 from sqlalchemy import func, select
 
 from database import SessionLocal
-from models import Automovil, Direccion, Usuario
+from models import Address, Car, User
 
 
-class UsuarioManager:
-    def crear(self, nombre_completo, email, username, password, fecha_nacimiento, estado="activo"):
+class UserManager:
+    def create(self, full_name, email, username, password, birth_date, status="active"):
         with SessionLocal() as session:
-            usuario = Usuario(
-                nombre_completo=nombre_completo,
+            user = User(
+                full_name=full_name,
                 email=email,
                 username=username,
                 password=password,
-                fecha_nacimiento=fecha_nacimiento,
-                estado=estado,
+                birth_date=birth_date,
+                status=status,
             )
-            session.add(usuario)
+            session.add(user)
             session.commit()
-            return usuario
+            return user
 
-    def modificar(self, usuario_id, **campos):
+    def update(self, user_id, **fields):
         with SessionLocal() as session:
-            usuario = session.get(Usuario, usuario_id)
-            if usuario is None:
+            user = session.get(User, user_id)
+            if user is None:
                 return None
-            for campo, valor in campos.items():
-                setattr(usuario, campo, valor)
+            for field, value in fields.items():
+                setattr(user, field, value)
             session.commit()
-            return usuario
+            return user
 
-    def eliminar(self, usuario_id):
+    def delete(self, user_id):
         with SessionLocal() as session:
-            usuario = session.get(Usuario, usuario_id)
-            if usuario is None:
+            user = session.get(User, user_id)
+            if user is None:
                 return False
-            session.delete(usuario)
+            session.delete(user)
             session.commit()
             return True
 
-    def consultar_todos(self):
+    def get_all(self):
         with SessionLocal() as session:
-            return list(session.scalars(select(Usuario)).all())
+            return list(session.scalars(select(User)).all())
 
-    def consultar_con_mas_de_un_auto(self):
-        """Usuarios con mas de 1 automovil asociado."""
+    def get_with_more_than_one_car(self):
+        """Users with more than 1 car associated."""
         with SessionLocal() as session:
             stmt = (
-                select(Usuario)
-                .join(Automovil, Automovil.usuario_id == Usuario.id)
-                .group_by(Usuario.id)
-                .having(func.count(Automovil.id) > 1)
+                select(User)
+                .join(Car, Car.user_id == User.id)
+                .group_by(User.id)
+                .having(func.count(Car.id) > 1)
             )
             return list(session.scalars(stmt).all())
 
 
-class AutomovilManager:
-    def crear(self, marca, modelo, anio, placa, usuario_id=None):
+class CarManager:
+    def create(self, brand, model, year, license_plate, user_id=None):
         with SessionLocal() as session:
-            automovil = Automovil(marca=marca, modelo=modelo, anio=anio, placa=placa, usuario_id=usuario_id)
-            session.add(automovil)
+            car = Car(brand=brand, model=model, year=year, license_plate=license_plate, user_id=user_id)
+            session.add(car)
             session.commit()
-            return automovil
+            return car
 
-    def modificar(self, automovil_id, **campos):
+    def update(self, car_id, **fields):
         with SessionLocal() as session:
-            automovil = session.get(Automovil, automovil_id)
-            if automovil is None:
+            car = session.get(Car, car_id)
+            if car is None:
                 return None
-            for campo, valor in campos.items():
-                setattr(automovil, campo, valor)
+            for field, value in fields.items():
+                setattr(car, field, value)
             session.commit()
-            return automovil
+            return car
 
-    def eliminar(self, automovil_id):
+    def delete(self, car_id):
         with SessionLocal() as session:
-            automovil = session.get(Automovil, automovil_id)
-            if automovil is None:
+            car = session.get(Car, car_id)
+            if car is None:
                 return False
-            session.delete(automovil)
+            session.delete(car)
             session.commit()
             return True
 
-    def asociar_usuario(self, automovil_id, usuario_id):
+    def assign_user(self, car_id, user_id):
         with SessionLocal() as session:
-            automovil = session.get(Automovil, automovil_id)
-            if automovil is None:
-                raise LookupError(f"Automovil {automovil_id} no existe.")
-            if session.get(Usuario, usuario_id) is None:
-                raise LookupError(f"Usuario {usuario_id} no existe.")
-            automovil.usuario_id = usuario_id
+            car = session.get(Car, car_id)
+            if car is None:
+                raise LookupError(f"Car {car_id} does not exist.")
+            if session.get(User, user_id) is None:
+                raise LookupError(f"User {user_id} does not exist.")
+            car.user_id = user_id
             session.commit()
-            return automovil
+            return car
 
-    def consultar_todos(self):
+    def get_all(self):
         with SessionLocal() as session:
-            return list(session.scalars(select(Automovil)).all())
+            return list(session.scalars(select(Car)).all())
 
-    def consultar_sin_usuario(self):
-        """Automoviles que no tienen usuario asociado."""
+    def get_without_user(self):
+        """Cars with no user associated."""
         with SessionLocal() as session:
-            stmt = select(Automovil).where(Automovil.usuario_id.is_(None))
+            stmt = select(Car).where(Car.user_id.is_(None))
             return list(session.scalars(stmt).all())
 
 
-class DireccionManager:
-    def crear(self, usuario_id, calle, ciudad, provincia, codigo_postal):
+class AddressManager:
+    def create(self, user_id, street, city, province, postal_code):
         with SessionLocal() as session:
-            if session.get(Usuario, usuario_id) is None:
-                raise LookupError(f"Usuario {usuario_id} no existe.")
-            direccion = Direccion(
-                usuario_id=usuario_id, calle=calle, ciudad=ciudad, provincia=provincia, codigo_postal=codigo_postal
-            )
-            session.add(direccion)
+            if session.get(User, user_id) is None:
+                raise LookupError(f"User {user_id} does not exist.")
+            address = Address(user_id=user_id, street=street, city=city, province=province, postal_code=postal_code)
+            session.add(address)
             session.commit()
-            return direccion
+            return address
 
-    def modificar(self, direccion_id, **campos):
+    def update(self, address_id, **fields):
         with SessionLocal() as session:
-            direccion = session.get(Direccion, direccion_id)
-            if direccion is None:
+            address = session.get(Address, address_id)
+            if address is None:
                 return None
-            for campo, valor in campos.items():
-                setattr(direccion, campo, valor)
+            for field, value in fields.items():
+                setattr(address, field, value)
             session.commit()
-            return direccion
+            return address
 
-    def eliminar(self, direccion_id):
+    def delete(self, address_id):
         with SessionLocal() as session:
-            direccion = session.get(Direccion, direccion_id)
-            if direccion is None:
+            address = session.get(Address, address_id)
+            if address is None:
                 return False
-            session.delete(direccion)
+            session.delete(address)
             session.commit()
             return True
 
-    def consultar_todas(self):
+    def get_all(self):
         with SessionLocal() as session:
-            return list(session.scalars(select(Direccion)).all())
+            return list(session.scalars(select(Address)).all())
 
-    def buscar_por_calle(self, substring):
-        """Direcciones cuya calle contiene el substring dado (sin distinguir mayusculas)."""
+    def search_by_street(self, substring):
+        """Addresses whose street contains the given substring (case-insensitive)."""
         with SessionLocal() as session:
-            stmt = select(Direccion).where(Direccion.calle.ilike(f"%{substring}%"))
+            stmt = select(Address).where(Address.street.ilike(f"%{substring}%"))
             return list(session.scalars(stmt).all())

@@ -10,57 +10,57 @@ Run from this folder:
 
 from datetime import date
 
-from managers import AutomovilManager, DireccionManager, UsuarioManager
+from managers import AddressManager, CarManager, UserManager
 
-usuarios = UsuarioManager()
-automoviles = AutomovilManager()
-direcciones = DireccionManager()
+users = UserManager()
+cars = CarManager()
+addresses = AddressManager()
 
 
 def main():
     print("--- Crear usuario ---")
-    usuario = usuarios.crear(
-        nombre_completo="Ana Rodriguez",
+    user = users.create(
+        full_name="Ana Rodriguez",
         email="ana.demo@example.com",
         username="anademo",
         password="hash-de-ejemplo",
-        fecha_nacimiento=date(1992, 4, 15),
+        birth_date=date(1992, 4, 15),
     )
-    print(usuario)
+    print(user)
 
     print("\n--- Modificar usuario ---")
-    usuario = usuarios.modificar(usuario.id, estado="inactivo")
-    print(usuario, "estado:", usuario.estado)
+    user = users.update(user.id, status="inactive")
+    print(user, "status:", user.status)
 
     print("\n--- Crear automovil SIN usuario (debe ser valido) ---")
-    auto_sin_dueno = automoviles.crear(marca="Toyota", modelo="Corolla", anio=2022, placa="DEMO-001")
-    print(auto_sin_dueno, "usuario_id:", auto_sin_dueno.usuario_id)
+    car_without_owner = cars.create(brand="Toyota", model="Corolla", year=2022, license_plate="DEMO-001")
+    print(car_without_owner, "user_id:", car_without_owner.user_id)
 
     print("\n--- Asociar ese automovil al usuario ---")
-    auto_sin_dueno = automoviles.asociar_usuario(auto_sin_dueno.id, usuario.id)
-    print(auto_sin_dueno, "usuario_id:", auto_sin_dueno.usuario_id)
+    car_without_owner = cars.assign_user(car_without_owner.id, user.id)
+    print(car_without_owner, "user_id:", car_without_owner.user_id)
 
     print("\n--- Crear direccion (requiere usuario) ---")
-    direccion = direcciones.crear(
-        usuario_id=usuario.id, calle="Calle 5", ciudad="San Jose", provincia="San Jose", codigo_postal="10101"
+    address = addresses.create(
+        user_id=user.id, street="Calle 5", city="San Jose", province="San Jose", postal_code="10101"
     )
-    print(direccion)
+    print(address)
 
     print("\n--- Intentar crear direccion con usuario inexistente (debe fallar) ---")
     try:
-        direcciones.crear(usuario_id=999999, calle="X", ciudad="X", provincia="X", codigo_postal="00000")
+        addresses.create(user_id=999999, street="X", city="X", province="X", postal_code="00000")
     except LookupError as error:
         print("Rechazado correctamente:", error)
 
     print("\n--- Consultar todos ---")
-    print(f"usuarios: {len(usuarios.consultar_todos())}")
-    print(f"automoviles: {len(automoviles.consultar_todos())}")
-    print(f"direcciones: {len(direcciones.consultar_todas())}")
+    print(f"usuarios: {len(users.get_all())}")
+    print(f"automoviles: {len(cars.get_all())}")
+    print(f"direcciones: {len(addresses.get_all())}")
 
     print("\n--- Limpieza ---")
-    direcciones.eliminar(direccion.id)
-    automoviles.eliminar(auto_sin_dueno.id)
-    usuarios.eliminar(usuario.id)
+    addresses.delete(address.id)
+    cars.delete(car_without_owner.id)
+    users.delete(user.id)
     print("Datos de la demo eliminados.")
 
 

@@ -15,8 +15,8 @@ import random
 from faker import Faker
 
 from database import SessionLocal
-from managers import AutomovilManager, DireccionManager, UsuarioManager
-from models import Automovil, Direccion, Usuario
+from managers import AddressManager, CarManager, UserManager
+from models import Address, Car, User
 
 USER_COUNT = 25
 UNOWNED_CAR_COUNT = 8
@@ -29,9 +29,9 @@ CAR_BRANDS_MODELS = [
 ]
 
 fake = Faker()
-usuarios_mgr = UsuarioManager()
-direcciones_mgr = DireccionManager()
-automoviles_mgr = AutomovilManager()
+user_manager = UserManager()
+address_manager = AddressManager()
+car_manager = CarManager()
 
 
 def fake_password_hash():
@@ -41,20 +41,20 @@ def fake_password_hash():
 def reset_tables():
     # Bulk delete expressed through the ORM, not a raw SQL string.
     with SessionLocal() as session:
-        session.query(Direccion).delete()
-        session.query(Automovil).delete()
-        session.query(Usuario).delete()
+        session.query(Address).delete()
+        session.query(Car).delete()
+        session.query(User).delete()
         session.commit()
 
 
-def crear_auto_aleatorio(usuario_id=None):
+def create_random_car(user_id=None):
     brand, model = random.choice(CAR_BRANDS_MODELS)
-    automoviles_mgr.crear(
-        marca=brand,
-        modelo=model,
-        anio=random.randint(2015, 2024),
-        placa=fake.unique.license_plate(),
-        usuario_id=usuario_id,
+    car_manager.create(
+        brand=brand,
+        model=model,
+        year=random.randint(2015, 2024),
+        license_plate=fake.unique.license_plate(),
+        user_id=user_id,
     )
 
 
@@ -66,38 +66,38 @@ def main():
 
     print(f"Generando {USER_COUNT} usuarios con direcciones y autos aleatorios...")
     for _ in range(USER_COUNT):
-        usuario = usuarios_mgr.crear(
-            nombre_completo=fake.name(),
+        user = user_manager.create(
+            full_name=fake.name(),
             email=fake.unique.email(),
             username=fake.unique.user_name(),
             password=fake_password_hash(),
-            fecha_nacimiento=fake.date_of_birth(minimum_age=18, maximum_age=70),
+            birth_date=fake.date_of_birth(minimum_age=18, maximum_age=70),
         )
 
         for _ in range(random.randint(1, 2)):
-            direcciones_mgr.crear(
-                usuario_id=usuario.id,
-                calle=fake.street_address(),
-                ciudad=fake.city(),
-                provincia=fake.state(),
-                codigo_postal=fake.postcode(),
+            address_manager.create(
+                user_id=user.id,
+                street=fake.street_address(),
+                city=fake.city(),
+                province=fake.state(),
+                postal_code=fake.postcode(),
             )
 
         for _ in range(random.randint(0, 2)):
-            crear_auto_aleatorio(usuario_id=usuario.id)
+            create_random_car(user_id=user.id)
 
     print(f"Generando {UNOWNED_CAR_COUNT} automoviles sin usuario asignado...")
     for _ in range(UNOWNED_CAR_COUNT):
-        crear_auto_aleatorio(usuario_id=None)
+        create_random_car(user_id=None)
 
-    total_usuarios = len(usuarios_mgr.consultar_todos())
-    total_autos = len(automoviles_mgr.consultar_todos())
-    total_direcciones = len(direcciones_mgr.consultar_todas())
-    sin_usuario = len(automoviles_mgr.consultar_sin_usuario())
+    total_users = len(user_manager.get_all())
+    total_cars = len(car_manager.get_all())
+    total_addresses = len(address_manager.get_all())
+    unowned = len(car_manager.get_without_user())
 
     print(
-        f"Listo: usuarios={total_usuarios}, direcciones={total_direcciones}, "
-        f"automoviles={total_autos} (sin usuario={sin_usuario})"
+        f"Listo: usuarios={total_users}, direcciones={total_addresses}, "
+        f"automoviles={total_cars} (sin usuario={unowned})"
     )
 
 

@@ -16,10 +16,10 @@ python check_sqlalchemy_version.py
 
 ## Modelos (Tarea 2)
 
-`models.py` define `Usuario`, `Direccion` y `Automovil`:
-- `direcciones.usuario_id` es **NOT NULL** (toda dirección necesita un usuario).
-- `automoviles.usuario_id` es **nullable** (un auto puede no tener dueño).
-- Ambas tienen FK a `usuarios`.
+`models.py` define `User`, `Address` y `Car`:
+- `addresses.user_id` es **NOT NULL** (toda dirección necesita un usuario).
+- `cars.user_id` es **nullable** (un auto puede no tener dueño).
+- Ambas tienen FK a `users`.
 
 ## Crear las tablas (Tarea 3)
 
@@ -30,7 +30,7 @@ Revisa qué tablas existen (vía `sqlalchemy.inspect`, sin SQL) y crea solo las 
 
 ## Clases manager (Tarea 4)
 
-`managers.py` tiene `UsuarioManager`, `AutomovilManager` y `DireccionManager`, cada una con `crear`, `modificar`, `eliminar` y el consultar-todos correspondiente. `AutomovilManager.asociar_usuario(automovil_id, usuario_id)` asocia un auto existente a un usuario existente.
+`managers.py` tiene `UserManager`, `CarManager` y `AddressManager`, cada una con `create`, `update`, `delete` y el `get_all` correspondiente. `CarManager.assign_user(car_id, user_id)` asocia un auto existente a un usuario existente.
 
 ## Ver todo funcionando junto
 
@@ -41,16 +41,16 @@ Crea un usuario, un auto sin dueño, lo asocia al usuario, crea una dirección, 
 
 ## Extra: filtros avanzados (Tarea 1 extra)
 
-- `AutomovilManager.consultar_sin_usuario()` — autos sin usuario asociado.
-- `UsuarioManager.consultar_con_mas_de_un_auto()` — usuarios con más de 1 auto.
-- `DireccionManager.buscar_por_calle(substring)` — direcciones cuya calle contiene ese substring (sin distinguir mayúsculas/minúsculas).
+- `CarManager.get_without_user()` — autos sin usuario asociado.
+- `UserManager.get_with_more_than_one_car()` — usuarios con más de 1 auto.
+- `AddressManager.search_by_street(substring)` — direcciones cuya calle contiene ese substring (sin distinguir mayúsculas/minúsculas).
 
 ## Extra: relaciones bidireccionales (Tarea 2 extra)
 
-`usuario.autos` y `usuario.direcciones` dan acceso directo a los autos/direcciones de ese usuario. `reportes.py` los usa para imprimir todo lo de un usuario dado su id:
+`user.cars` y `user.addresses` dan acceso directo a los autos/direcciones de ese usuario. `reports.py` los usa para imprimir todo lo de un usuario dado su id:
 
 ```bash
-python reportes.py <usuario_id>
+python reports.py <user_id>
 ```
 
 ## Extra: seed con Faker (Tarea 3 extra)
@@ -58,4 +58,4 @@ python reportes.py <usuario_id>
 ```bash
 python seed_with_faker.py
 ```
-Vacía y repuebla la base con 25 usuarios (cada uno con 1-2 direcciones y 0-2 autos) más 8 autos sin usuario asignado — todo insertado a través de `UsuarioManager`, `DireccionManager` y `AutomovilManager` (ORM puro, sin SQL).
+Vacía y repuebla la base con 25 usuarios (cada uno con 1-2 direcciones y 0-2 autos) más 8 autos sin usuario asignado — todo insertado a través de `UserManager`, `AddressManager` y `CarManager` (ORM puro, sin SQL).
