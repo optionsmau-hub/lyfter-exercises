@@ -45,9 +45,12 @@ class ProductRepository:
             return row
 
     def decrease_stock(self, product_id, amount):
+        # The quantity >= amount check runs inside the same atomic UPDATE,
+        # so two concurrent purchases can't both pass a separate pre-check
+        # and oversell the stock.
         stmt = (
             update(product_table)
-            .where(product_table.c.id == product_id)
+            .where(product_table.c.id == product_id, product_table.c.quantity >= amount)
             .values(quantity=product_table.c.quantity - amount)
             .returning(product_table.c.id)
         )

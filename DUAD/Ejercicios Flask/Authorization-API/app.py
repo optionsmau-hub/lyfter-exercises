@@ -240,11 +240,13 @@ def purchase_product(product_id):
     if quantity <= 0:
         return jsonify(error="Quantity must be greater than zero"), 400
 
-    if product.quantity < quantity:
+    # The availability check and the decrement happen atomically in the DB,
+    # so two concurrent purchases can't both oversell the same stock.
+    decremented = product_repository.decrease_stock(product_id, quantity)
+    if decremented is None:
         return jsonify(error="Not enough stock available"), 400
 
     total = product.price * quantity
-    product_repository.decrease_stock(product_id, quantity)
     new_invoice = invoice_repository.create(
         user_id=g.current_user.id,
         product_id=product.id,
